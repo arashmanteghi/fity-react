@@ -1,6 +1,11 @@
+import type { VideoInfo } from '../types/video'
 import { formatDuration } from '../utils/format'
 
-export default function VideoCard({ video }) {
+interface VideoCardProps {
+  video: VideoInfo
+}
+
+export default function VideoCard({ video }: VideoCardProps) {
   return (
     <div className="flex gap-4 p-4 rounded-xl bg-slate-900 border border-slate-800">
       {video.thumbnail && (
@@ -15,22 +20,16 @@ export default function VideoCard({ video }) {
           {video.title}
         </h2>
         <div className="flex flex-wrap gap-2 mt-1">
-          {video.uploader && (
-            <Badge>{video.uploader}</Badge>
-          )}
-          {video.platform && (
-            <Badge>{video.platform}</Badge>
-          )}
-          {video.duration && (
-            <Badge>{formatDuration(video.duration)}</Badge>
-          )}
+          {video.uploader && <Badge>{video.uploader}</Badge>}
+          {video.platform && <Badge>{video.platform}</Badge>}
+          {video.duration && <Badge>{formatDuration(video.duration)}</Badge>}
         </div>
       </div>
     </div>
   )
 }
 
-function Badge({ children }) {
+function Badge({ children }: { children: React.ReactNode }) {
   return (
     <span className="text-xs px-2 py-0.5 rounded-md bg-slate-800 text-slate-400 border border-slate-700">
       {children}

@@ -1,11 +1,16 @@
 import { useState } from 'react'
 
+interface UrlFormProps {
+  onSubmit: (url: string) => void
+  isLoading: boolean
+}
+
 const PLATFORMS = ['YouTube', 'Instagram', 'Facebook', 'Twitter / X']
 
-export default function UrlForm({ onSubmit, isLoading }) {
+export default function UrlForm({ onSubmit, isLoading }: UrlFormProps) {
   const [url, setUrl] = useState('')
 
-  function handleSubmit(e) {
+  function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault()
     const trimmed = url.trim()
     if (trimmed) onSubmit(trimmed)

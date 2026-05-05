@@ -1,10 +1,10 @@
-export function formatBytes(bytes) {
-  if (!bytes) return null
+export function formatBytes(bytes: number | null): string | null {
+  if (bytes === null) return null
   if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(0)} KB`
   return `${(bytes / (1024 * 1024)).toFixed(1)} MB`
 }
 
-export function formatDuration(seconds) {
+export function formatDuration(seconds: number | null): string {
   if (!seconds) return '0:00'
   const h = Math.floor(seconds / 3600)
   const m = Math.floor((seconds % 3600) / 60)

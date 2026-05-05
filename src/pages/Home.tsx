@@ -1,14 +1,24 @@
 import { useState } from 'react'
+import type { FetchBaseQueryError } from '@reduxjs/toolkit/query'
+import type { SerializedError } from '@reduxjs/toolkit'
 import { useLazyGetVideoInfoQuery } from '../store/videoApi'
 import UrlForm from '../components/UrlForm'
 import VideoCard from '../components/VideoCard'
 import FormatList from '../components/FormatList'
 
+function getErrorMessage(error: FetchBaseQueryError | SerializedError): string {
+  if ('status' in error) {
+    const data = error.data as { detail?: string; error?: string } | undefined
+    return data?.detail ?? data?.error ?? 'Could not fetch video info. Check the URL and try again.'
+  }
+  return error.message ?? 'Could not fetch video info. Check the URL and try again.'
+}
+
 export default function Home() {
-  const [submittedUrl, setSubmittedUrl] = useState(null)
+  const [submittedUrl, setSubmittedUrl] = useState<string | null>(null)
   const [trigger, { data, isFetching, isError, error }] = useLazyGetVideoInfoQuery()
 
-  function handleSubmit(url) {
+  function handleSubmit(url: string) {
     setSubmittedUrl(url)
     trigger(url)
   }
@@ -32,13 +42,13 @@ export default function Home() {
           </div>
         )}
 
-        {isError && (
+        {isError && error && (
           <div className="rounded-lg border border-red-900 bg-red-950/40 px-4 py-3 text-sm text-red-400">
-            {error?.data?.detail || error?.data?.error || 'Could not fetch video info. Check the URL and try again.'}
+            {getErrorMessage(error)}
           </div>
         )}
 
-        {data && !isFetching && (
+        {data && !isFetching && submittedUrl && (
           <>
             <VideoCard video={data} />
             <FormatList formats={data.formats} videoUrl={submittedUrl} title={data.title} />
@@ -51,7 +61,15 @@ export default function Home() {
 
 function Spinner() {
   return (
-    <svg className="animate-spin" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2">
+    <svg
+      className="animate-spin"
+      width="16"
+      height="16"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+    >
       <path d="M21 12a9 9 0 1 1-6.219-8.56" />
     </svg>
   )

@@ -1,7 +1,30 @@
+import type { VideoFormat } from '../types/video'
 import { buildStreamUrl } from '../store/videoApi'
 import { formatBytes } from '../utils/format'
 
-export default function FormatList({ formats, videoUrl, title }) {
+interface FormatListProps {
+  formats: VideoFormat[]
+  videoUrl: string
+  title: string
+}
+
+interface FormatRowProps {
+  format: VideoFormat
+  videoUrl: string
+  title: string
+}
+
+interface SectionProps {
+  title: string
+  note?: string
+  children: React.ReactNode
+}
+
+interface IconProps {
+  size?: number
+}
+
+export default function FormatList({ formats, videoUrl, title }: FormatListProps) {
   const visible = formats.filter((f) => f.ext !== 'mhtml')
   const withAudio = visible.filter((f) => f.hasVideo && f.hasAudio)
   const videoOnly = visible.filter((f) => f.hasVideo && !f.hasAudio)
@@ -11,7 +34,6 @@ export default function FormatList({ formats, videoUrl, title }) {
 
   return (
     <div className="flex flex-col gap-4">
-      {/* Best quality shortcut */}
       <a
         href={bestUrl}
         className="flex items-center justify-center gap-2 w-full py-3 rounded-lg
@@ -48,26 +70,24 @@ export default function FormatList({ formats, videoUrl, title }) {
   )
 }
 
-function Section({ title, note, children }) {
+function Section({ title, note, children }: SectionProps) {
   return (
     <div className="rounded-xl border border-slate-800 overflow-hidden">
       <div className="px-4 py-2 bg-slate-900 border-b border-slate-800 flex items-baseline gap-3">
         <span className="text-xs font-semibold uppercase tracking-wider text-slate-400">{title}</span>
         {note && <span className="text-xs text-slate-600">{note}</span>}
       </div>
-      <div className="divide-y divide-slate-800">
-        {children}
-      </div>
+      <div className="divide-y divide-slate-800">{children}</div>
     </div>
   )
 }
 
-function FormatRow({ format, videoUrl, title }) {
+function FormatRow({ format, videoUrl, title }: FormatRowProps) {
   const { formatId, resolution, note, ext, filesize, vcodec, acodec, tbr } = format
   const url = buildStreamUrl(videoUrl, formatId, title)
   const size = formatBytes(filesize)
-  const codec = vcodec || acodec || null
-  const quality = note || resolution || formatId
+  const codec = vcodec ?? acodec ?? null
+  const quality = note ?? resolution ?? formatId
 
   return (
     <div className="flex items-center justify-between gap-4 px-4 py-3 bg-slate-950 hover:bg-slate-900 transition-colors">
@@ -94,7 +114,7 @@ function FormatRow({ format, videoUrl, title }) {
   )
 }
 
-function Tag({ children }) {
+function Tag({ children }: { children: React.ReactNode }) {
   return (
     <span className="text-xs px-1.5 py-0.5 rounded bg-slate-800 text-slate-500 border border-slate-700">
       {children}
@@ -102,9 +122,18 @@ function Tag({ children }) {
   )
 }
 
-function DownloadIcon({ size = 14 }) {
+function DownloadIcon({ size = 14 }: IconProps) {
   return (
-    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+    <svg
+      width={size}
+      height={size}
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
       <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
       <polyline points="7 10 12 15 17 10" />
       <line x1="12" y1="15" x2="12" y2="3" />
